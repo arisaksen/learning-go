@@ -1,0 +1,5 @@
+# Open fils in this editor with 'BinEd Plugin' IntelliJ
+# Ignore everything in this directory
+*
+# Except this file
+!.gitignore
