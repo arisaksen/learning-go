@@ -21,9 +21,7 @@ func newDataStore() dataStore {
 	}
 }
 
-func (ds dataStore) writeToBufferUnsafe(text string, wg *sync.WaitGroup) {
-	defer wg.Done()
-
+func (ds dataStore) writeToBufferUnsafe(text string) {
 	// Simulate some work
 	time.Sleep(1 * time.Second)
 
@@ -32,9 +30,7 @@ func (ds dataStore) writeToBufferUnsafe(text string, wg *sync.WaitGroup) {
 	*ds.writeCounter++
 }
 
-func (ds dataStore) writeToBufferSafe(text string, wg *sync.WaitGroup) {
-	defer wg.Done()
-
+func (ds dataStore) writeToBufferSafe(text string) {
 	// Simulate some work
 	time.Sleep(1 * time.Second)
 

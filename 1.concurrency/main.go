@@ -1,51 +1,25 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"log"
-	"sync"
 )
 
-func Worker(results chan<- []byte, errorsChan chan<- error, wg *sync.WaitGroup) {
-	defer wg.Done()
-
-	response, err := DummyGetResponse()
-	if err != nil {
-		errorsChan <- err
+func work(from string) {
+	for i := 0; i < 3; i++ {
+		fmt.Println(from, ":", i)
 	}
-
-	results <- response
-}
-
-func DummyGetResponse() ([]byte, error) {
-	response := []byte{byte(0b11111111)} // 1 byte - 8 bit response. Decimal: 255, Hex: 0xFF, Bin: 0b 1111.1111
-	return response, nil
 }
 
 func main() {
-	const numberOfResults = 10
-	buffer := new(bytes.Buffer)
+	work("direct")
 
-	results := make(chan []byte, numberOfResults)
-	errorsChan := make(chan error, numberOfResults)
+	go work("goroutine")
 
-	var wg sync.WaitGroup
-	for i := 0; i < numberOfResults; i++ {
-		wg.Add(1)
-		go Worker(results, errorsChan, &wg)
-	}
+	// You can also start a goroutine for an anonymous function call.
+	go func(msg string) {
+		fmt.Println(msg)
+	}("goroutine2")
 
-	wg.Wait()
-	close(results)
-	close(errorsChan)
-	for result := range results {
-		buffer.Write(result)
-	}
-	for err := range errorsChan {
-		if err != nil {
-			log.Fatalf("Error %v", err)
-		}
-	}
-	fmt.Printf("Length of buffer. %d", buffer.Len())
+	//time.Sleep(time.Second) // If we add the wait here. The goroutines will not have time to finish
+	fmt.Println("done")
 }

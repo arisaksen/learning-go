@@ -22,9 +22,16 @@ func main() {
 	// Launch multiple goroutines
 	for _, text := range texts {
 		wg.Add(1)
-		go myDataStoreNoLock.writeToBufferUnsafe(text, &wg)
+		go func() {
+			defer wg.Done()
+			go myDataStoreNoLock.writeToBufferUnsafe(text)
+		}()
+
 		wg.Add(1)
-		go myDataStoreMutex.writeToBufferSafe(text, &wg)
+		go func() {
+			defer wg.Done()
+			myDataStoreMutex.writeToBufferSafe(text)
+		}()
 	}
 
 	// Wait for all goroutines to finish
