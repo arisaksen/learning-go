@@ -10,13 +10,6 @@ import (
 	"time"
 )
 
-type job interface {
-	loadData(input string, output string) <-chan job
-	transform1() <-chan job
-	transform2() <-chan job
-	saveData() <-chan bool
-}
-
 type Job struct {
 	InputPath string
 	Packet    UdpPacket
