@@ -7,44 +7,45 @@ import (
 	"sync"
 )
 
+func Worker(results chan<- []byte, errorsChan chan<- error, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	response, err := DummyGetResponse()
+	if err != nil {
+		errorsChan <- err
+	}
+
+	results <- response
+}
+
+func DummyGetResponse() ([]byte, error) {
+	response := []byte{byte(0b11111111)} // 1 byte - 8 bit response. Decimal: 255, Hex: 0xFF, Bin: 0b 1111.1111
+	return response, nil
+}
+
 func main() {
 	const numberOfResults = 10
 	buffer := new(bytes.Buffer)
 
-	// Create channels to store results and errors. This is like a que to store values
 	results := make(chan []byte, numberOfResults)
 	errorsChan := make(chan error, numberOfResults)
 
-	// A WaitGroup waits for a collection of goroutines to finish.
 	var wg sync.WaitGroup
-
 	for i := 0; i < numberOfResults; i++ {
-
-		// +1 to waitGroup to let it know how many Goroutines to wait for
 		wg.Add(1)
-
-		// 'Go' starts a goroutine
 		go Worker(results, errorsChan, &wg)
 	}
 
-	// Wait here for finish and read responses from channels
 	wg.Wait()
-
-	// Close channels before reading data
 	close(results)
 	close(errorsChan)
-
-	// Write all data to buffer
 	for result := range results {
 		buffer.Write(result)
 	}
-
-	// Check for errors
 	for err := range errorsChan {
 		if err != nil {
 			log.Fatalf("Error %v", err)
 		}
 	}
-
 	fmt.Printf("Length of buffer. %d", buffer.Len())
 }

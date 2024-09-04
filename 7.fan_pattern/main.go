@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	inputFiles = "fan_pattern/input"
-	outFiles   = "fan_pattern/output"
+	inputFiles = "7.fan_pattern/input"
+	outFiles   = "7.fan_pattern/output"
 )
 
 func main() {
