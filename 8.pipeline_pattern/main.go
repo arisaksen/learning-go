@@ -1,8 +1,8 @@
 package main
 
 const (
-	inputFiles = "6.pipeline_pattern/input"
-	outFiles   = "6.pipeline_pattern/output"
+	inputFiles = "8.pipeline_pattern/input"
+	outFiles   = "8.pipeline_pattern/output"
 )
 
 func main() {
