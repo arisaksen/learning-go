@@ -11,3 +11,8 @@ The resources used was: [GoByExample][1], [codeHeim][2], [anthonygg][3]
 [2]: https://www.youtube.com/@codeheim/videos            "codeHeim"
 
 [3]: https://www.youtube.com/@anthonygg_/videos "anthonygg"
+
+# Focus study
+
+* Package context
+* Interfaces
