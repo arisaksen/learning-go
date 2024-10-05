@@ -1,7 +1,6 @@
 package workpool
 
 import (
-	"log"
 	"sync"
 )
 
@@ -17,9 +16,9 @@ type Manager struct {
 }
 
 func (wm *Manager) work(paths []string) {
-	for i := 0; i < wm.concurrentJobs; i++ {
+	for i := 1; i <= wm.concurrentJobs; i++ {
 		wm.wg.Add(1)
-		go worker(1, wm.jobCh, wm.jobResultCh, wm.jobErrCh, wm.wg)
+		go wm.worker(i)
 	}
 
 	jobIndex := 1
@@ -37,12 +36,12 @@ func (wm *Manager) work(paths []string) {
 	close(wm.jobCh)
 	wm.wg.Wait()
 
-	close(wm.jobErrCh)
-	for jobErr := range wm.jobErrCh {
-		if jobErr.err != nil {
-			log.Fatal("worker", jobErr.id, "got an error", jobErr.err, "for path", jobErr.path)
-		}
-	}
+	//close(wm.jobErrCh)
+	//for jobErr := range wm.jobErrCh {
+	//	if jobErr.err != nil {
+	//		log.Fatal("worker", jobErr.id, "got an error", jobErr.err, "for path", jobErr.path)
+	//	}
+	//}
 
 	//close(wm.jobResultCh)
 	//for jobResult := range wm.jobResultCh {

@@ -20,7 +20,7 @@ func TestWorkPoolManager(t *testing.T) {
 	t.Logf("Packets per chunk %d", packetsPerChunk)
 
 	wm := Manager{
-		concurrentJobs: 100,
+		concurrentJobs: 5,
 		jobCh:          make(chan Job, 100),
 		jobErrCh:       make(chan JobError, 100),
 		jobResultCh:    make(chan JobResult, 100),
@@ -28,6 +28,14 @@ func TestWorkPoolManager(t *testing.T) {
 		jobSize:        packetsPerChunk,
 	}
 	wm.work(paths)
+
+	close(wm.jobErrCh)
+	for jobErr := range wm.jobErrCh {
+		if jobErr.err != nil {
+			t.Errorf("worker%d err", jobErr.id)
+			t.Error(jobErr.err)
+		}
+	}
 
 	close(wm.jobResultCh)
 	expectedJobResults := 20

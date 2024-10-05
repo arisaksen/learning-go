@@ -2,8 +2,8 @@ package workpool
 
 import (
 	_ "embed"
+	"errors"
 	"log"
-	"sync"
 	"time"
 )
 
@@ -23,26 +23,29 @@ type JobResult struct {
 	workerId int
 }
 
-func worker(workerId int, jobCh <-chan Job, jobResultCh chan<- JobResult, jobErrCh chan<- JobError, wg *sync.WaitGroup) {
-	defer wg.Done()
+func (wm *Manager) worker(workerId int) {
+	defer wm.wg.Done()
 
-	for job := range jobCh {
+	for job := range wm.jobCh {
 		var err error
 		log.Println("worker", workerId, "started  job", job.id)
 
 		// Do some work
 		time.Sleep(2 * time.Second)
+		if job.id == 17 {
+			err = errors.New("this is an error for job 17")
+		}
 
 		log.Println("worker", workerId, "finished job", job.id)
 
 		if err != nil {
-			jobErrCh <- JobError{
+			wm.jobErrCh <- JobError{
 				id:   workerId,
 				err:  err,
 				path: "",
 			}
 		}
-		jobResultCh <- JobResult{
+		wm.jobResultCh <- JobResult{
 			id:       job.id,
 			workerId: workerId,
 		}
