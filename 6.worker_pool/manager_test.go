@@ -7,7 +7,7 @@ import (
 )
 
 func TestWorkPoolManager(t *testing.T) {
-	numberOfPackets := 500000
+	numberOfPackets := 4000000 // 4.000.000 -> 157 jobs. will cause deadlock when channel buffer 100
 	var paths []string
 	for i := 0; i < numberOfPackets; i++ {
 		packet := fmt.Sprintf("packet%d.bin", i)
@@ -17,15 +17,20 @@ func TestWorkPoolManager(t *testing.T) {
 	packetSize := 8192
 	desiredChunkSize := 200 * 1024 * 1024 // 200MB
 	packetsPerChunk := desiredChunkSize / packetSize
-	t.Logf("Packets per chunk %d", packetsPerChunk)
+	t.Logf("Packets per chunk %d (packets per job)", packetsPerChunk)
+	numberOfJobs := (numberOfPackets / packetsPerChunk) + 1
+	t.Logf("Number of jobs %d", numberOfJobs)
 
 	wm := Manager{
-		concurrentJobs: 5,
-		jobCh:          make(chan Job, 100),
-		jobErrCh:       make(chan JobError, 100),
-		jobResultCh:    make(chan JobResult, 100),
-		wg:             new(sync.WaitGroup),
-		jobSize:        packetsPerChunk,
+		concurrentJobs: 50,
+		//jobCh:          make(chan Job),
+		//jobErrCh:       make(chan JobError, 100),
+		//jobResultCh:    make(chan JobResult, 100),
+		jobCh:       make(chan Job),
+		jobErrCh:    make(chan JobError, numberOfJobs),
+		jobResultCh: make(chan JobResult, numberOfJobs),
+		wg:          new(sync.WaitGroup),
+		jobSize:     packetsPerChunk,
 	}
 	wm.work(paths)
 
@@ -38,7 +43,7 @@ func TestWorkPoolManager(t *testing.T) {
 	}
 
 	close(wm.jobResultCh)
-	expectedJobResults := 20
+	expectedJobResults := 157
 	if expectedJobResults != len(wm.jobResultCh) {
 		t.Fatalf("expected '%d' jobs but got '%d'", expectedJobResults, len(wm.jobResultCh))
 	}

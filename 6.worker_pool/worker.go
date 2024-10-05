@@ -2,7 +2,6 @@ package workpool
 
 import (
 	_ "embed"
-	"errors"
 	"log"
 	"time"
 )
@@ -32,9 +31,9 @@ func (wm *Manager) worker(workerId int) {
 
 		// Do some work
 		time.Sleep(2 * time.Second)
-		if job.id == 17 {
-			err = errors.New("this is an error for job 17")
-		}
+		//if job.id == 17 {
+		//	err = errors.New("this is an error for job 17")
+		//}
 
 		log.Println("worker", workerId, "finished job", job.id)
 
