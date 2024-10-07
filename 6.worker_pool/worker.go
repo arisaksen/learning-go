@@ -2,6 +2,7 @@ package workpool
 
 import (
 	_ "embed"
+	"errors"
 	"log"
 	"time"
 )
@@ -12,9 +13,10 @@ type Job struct {
 }
 
 type JobError struct {
-	id   int
-	err  error
-	path string
+	id       int
+	workerId int
+	err      error
+	path     string
 }
 
 type JobResult struct {
@@ -27,21 +29,22 @@ func (wm *Manager) worker(workerId int) {
 
 	for job := range wm.jobCh {
 		var err error
-		log.Println("worker", workerId, "started  job", job.id)
+		log.Printf("Worker %d started  job %d. Number of packets: %d", workerId, job.id, len(job.paths))
 
 		// Do some work
 		time.Sleep(2 * time.Second)
-		//if job.id == 17 {
-		//	err = errors.New("this is an error for job 17")
-		//}
+		if job.id == 17 {
+			err = errors.New("this is an error for job 17")
+		}
 
 		log.Println("worker", workerId, "finished job", job.id)
 
 		if err != nil {
 			wm.jobErrCh <- JobError{
-				id:   workerId,
-				err:  err,
-				path: "",
+				id:       job.id,
+				workerId: workerId,
+				err:      err,
+				path:     "",
 			}
 		}
 		wm.jobResultCh <- JobResult{

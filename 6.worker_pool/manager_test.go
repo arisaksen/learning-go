@@ -23,22 +23,28 @@ func TestWorkPoolManager(t *testing.T) {
 
 	wm := Manager{
 		concurrentJobs: 50,
-		//jobCh:          make(chan Job),
-		//jobErrCh:       make(chan JobError, 100),
-		//jobResultCh:    make(chan JobResult, 100),
-		jobCh:       make(chan Job),
+		jobCh:          make(chan Job),
+
+		// must	match number of errors and results. will cause goroutine deadlock if the buffer overflows. jobResults > 100
 		jobErrCh:    make(chan JobError, numberOfJobs),
 		jobResultCh: make(chan JobResult, numberOfJobs),
-		wg:          new(sync.WaitGroup),
-		jobSize:     packetsPerChunk,
+		//jobErrCh:       make(chan JobError, 100),
+		//jobResultCh:    make(chan JobResult, 100),
+
+		wg:      new(sync.WaitGroup),
+		jobSize: packetsPerChunk,
 	}
 	wm.work(paths)
 
 	close(wm.jobErrCh)
 	for jobErr := range wm.jobErrCh {
 		if jobErr.err != nil {
-			t.Errorf("worker%d err", jobErr.id)
-			t.Error(jobErr.err)
+			t.Logf("Worker %d job %d err", jobErr.workerId, jobErr.id)
+			if jobErr.id == 17 {
+				t.Logf("Hardcoded error for job %d (this should fail, but not fail the test)", 17)
+			} else {
+				t.Error(jobErr.err)
+			}
 		}
 	}
 
