@@ -15,7 +15,4 @@ func main() {
 	fmt.Printf("b: %d bytes\n", beforeMemory)
 	fmt.Printf("b: %f MB\n", float64(beforeMemory)/1000000)
 
-	// sizeOfStruct
-	header := Header{}
-	ReadSizeOfStruct(header)
 }
