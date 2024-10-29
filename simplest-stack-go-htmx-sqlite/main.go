@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	_ "embed"
 	"fmt"
 	"github.com/gorilla/mux"
 	_ "github.com/mattn/go-sqlite3"
@@ -11,6 +12,9 @@ import (
 	"strconv"
 	"strings"
 )
+
+//go:embed sql/createTasksTable.sql
+var createTasksTable string
 
 var (
 	tmpl *template.Template
@@ -36,13 +40,7 @@ func initDB() {
 	if err = db.Ping(); err != nil {
 		log.Fatal(err)
 	}
-	_, err = db.Exec(`
-		CREATE TABLE IF NOT EXISTS tasks (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			task TEXT,
-			done TEXT
-	   )`,
-	)
+	_, err = db.Exec(createTasksTable)
 	if err != nil {
 		log.Fatal(err)
 	}
