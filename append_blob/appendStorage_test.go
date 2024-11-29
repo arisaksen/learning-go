@@ -3,7 +3,6 @@ package storage
 import (
 	"bytes"
 	"context"
-	"microsar-processing-line/storage"
 	"testing"
 )
 

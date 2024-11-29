@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func concatPlusEquals(values []string) byte {
+func concatPlusEquals(values []string) string {
 	s := ""
 	for _, value := range values {
 		s += value
@@ -15,11 +15,11 @@ func concatPlusEquals(values []string) byte {
 	return s
 }
 
-func concatJoin(values []string) byte {
+func concatJoin(values []string) string {
 	return strings.Join(values, "")
 }
 
-func concatStringsBuilderV1(values []string) byte {
+func concatStringsBuilderV1(values []string) string {
 	sb := strings.Builder{}
 	for _, value := range values {
 		_, err := sb.WriteString(value)
@@ -30,7 +30,7 @@ func concatStringsBuilderV1(values []string) byte {
 	return sb.String()
 }
 
-func concatStringsBuilderV2(values []string) byte {
+func concatStringsBuilderV2(values []string) string {
 	total := 0
 	for i := 0; i < len(values); i++ {
 		total += len(values[i])
@@ -44,8 +44,8 @@ func concatStringsBuilderV2(values []string) byte {
 	return sb.String()
 }
 
-func createInitialStringList() []byte {
-	var bl []byte
+func createInitialStringList() []string {
+	var bl []string
 	for i := 0; i < 10_000; i++ {
 		bl = append(bl, strconv.Itoa(i))
 	}
