@@ -7,7 +7,7 @@ import (
 )
 
 func TestWorkPoolManager(t *testing.T) {
-	numberOfPackets := 4000000 // 4.000.000 -> 157 jobs. will cause deadlock when channel buffer 100
+	numberOfPackets := 4_000_000 // 4_000_000 -> 157 jobs. will cause deadlock when channel buffer 100
 	var paths []string
 	for i := 0; i < numberOfPackets; i++ {
 		packet := fmt.Sprintf("packet%d.bin", i)
