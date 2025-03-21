@@ -1,0 +1,28 @@
+package main
+
+templ InitializeClientSideScripts(center Location, locations []Location, zoom float64) {
+	<script src="static/functions.js"></script>
+	@templ.JSFuncCall("initializeMap", center, locations, zoom)
+}
+
+templ MyDocument(center Location, locations []Location, zoom float64) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>HTMX Map</title>
+			<script src="https://unpkg.com/htmx.org@1.9.6"></script>
+			<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+			<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+			<style>
+            #map { height: 500px; }
+        </style>
+		</head>
+		<body>
+			<h1>HTMX Map Example</h1>
+			<div id="map"></div>
+			@InitializeClientSideScripts(center, locations, zoom)
+		</body>
+	</html>
+}
